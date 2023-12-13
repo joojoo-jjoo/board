@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper/dtd">
+<mapper namespace="board">
+	<insert id="boardInsert" parameterType="com.joo.hello.board.vo.BoardVO">
+		INSERT into jooboard
+		( BOARD_NUM
+		 ,BOARD_TITLE
+		 ,BOARD_CONTENT
+		 ,BOARD_WRITER
+		 )
+		values(
+			BOARD_SEQ.nextval,
+			#{BOARD_TITLE},
+			#{BOARD_CONTENT},
+			#{BOARD_WRITER}
+		)
+	</insert>
+	<select id="boardlist" resultType="com.joo.hello.board.vo.BoardVO">
+		SELECT
+			 BOARD_NUM
+			,BOARD_TITLE
+			,BOARD_CONTENT
+			,BOARD_WRITER
+			,REG_DATE
+		FROM jooboard
+		order by BOARD_NUM asc	<!-- 글번호를 기준으로 오름차순 정렬  -->
+	</select>
+	
+	<select id="boardView" parameterType="int" resultType="com.joo.hello.board.vo.BoardVO">
+		SELECT
+			 BOARD_NUM
+			,BOARD_TITLE
+			,BOARD_CONTENT
+			,BOARD_WRITER
+			,REG_DATE
+		FROM jooboard
+		WHERE BOARD_NUM = #{BOARD_NUM}		
+	</select>
+	
+	<update id="boardUpdate" parameterType="com.joo.hello.board.vo.BoardVO">
+        UPDATE  jooboard 
+           SET  BOARD_TITLE   = #{BOARD_TITLE},
+            	BOARD_CONTENT = #{BOARD_CONTENT}
+        WHERE   BOARD_NUM 	  = #{BOARD_NUM}	
+	</update>
+	
+	<delete id="boardDelete" parameterType="int">
+		DELETE
+		FROM  jooboard
+		WHERE BOARD_NUM = #{BOARD_NUM}
+	</delete>
+	
+	<insert id="insertReply" parameterType="com.joo.hello.board.vo.ReplyVO">
+		<selectKey keyProperty="reply_id" resultType="int" order="BEFORE">
+			SELECT reply_seq.nextval FROM DUAL
+		</selectKey>
+		INSERT into board_reply
+		( reply_id
+		 ,board_id
+		 ,parent_id
+		 ,depth
+		 ,reply_content
+		 ,reply_writer
+		 ,reply_password
+		)
+		values(
+		 #{reply_id},
+		 #{board_id},
+		 #{parent_id},
+		 #{depth},
+		 #{reply_content},
+		 #{reply_writer},
+		 #{reply_password}
+		)
+	</insert>
+	
+	<select id="replyList" resultType="com.joo.hello.board.vo.ReplyVO">
+        SELECT
+             reply_id
+            ,board_id
+            ,parent_id
+            ,depth
+            ,reply_content
+            ,reply_writer
+            ,reply_password
+        FROM
+            board_reply
+        WHERE
+            board_id = #{board_id}
+        order by reply_id asc	
+	</select>
+	
+	<delete id="replyDelete" parameterType="com.joo.hello.board.vo.ReplyVO">
+		DELETE
+		FROM   board_reply
+		WHERE  reply_id 	  = #{reply_id}
+		AND    reply_password = #{reply_password}
+	</delete>
+	
+	<delete id="replyDeleteAll" parameterType="com.joo.hello.board.vo.ReplyVO">
+		DELETE
+		FROM board_reply
+		WHERE
+		    reply_id in (
+	                    SELECT
+	                        reply_id
+	                    FROM 
+	                       (SELECT 
+	                             reply_id
+	                        FROM board_reply
+	                        WHERE 
+	                            reply_id = #{reply_id}
+	                        AND 
+	                            reply_password = #{reply_password} )a
+		        )or parent_id in(
+		            SELECT
+		                reply_id
+		            FROM
+		               (SELECT
+		                     reply_id
+		                FROM board_reply
+		                WHERE 
+		                    reply_id = #{reply_id}
+		                AND
+		                    reply_password = #{reply_password} )a
+		                    
+		        )	
+	</delete>
+	
+	<update id="updateReply" parameterType="com.joo.hello.board.vo.ReplyVO">
+		UPDATE board_reply
+		SET  parent_id		= #{parent_id}
+		    ,depth 			= #{depth}
+		    ,reply_content  = #{reply_content}
+		    ,reply_writer   = #{reply_writer}
+		    ,reply_password = #{reply_password}
+		WHERE
+		    reply_id 		= #{reply_id}
+	</update>
+	
+	<select id="checkReply" resultType="int" parameterType="com.joo.hello.board.vo.ReplyVO">
+		SELECT count(*)
+		FROM   board_reply
+		WHERE  reply_id 	  = #{reply_id}
+		AND    reply_password = #{reply_password}
+	</select>
+</mapper>
