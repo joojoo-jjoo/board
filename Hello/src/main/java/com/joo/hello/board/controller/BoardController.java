@@ -21,7 +21,7 @@ import com.joo.hello.board.vo.ReplyVO;
 
 @Controller
 public class BoardController {
-	
+	//test
 	@Inject
 	BoardService boardService;
 	//게시글 목록 화면
