@@ -21,21 +21,15 @@
     <WatchedResource>WEB-INF/web.xml</WatchedResource>
     <WatchedResource>WEB-INF/tomcat-web.xml</WatchedResource>
     <WatchedResource>${catalina.base}/conf/web.xml</WatchedResource>
-
+<Resources allowLinking="true" />
     <!-- Uncomment this to disable session persistence across Tomcat restarts -->
     <!--
     <Manager pathname="" />
     -->
-
-   <beans:bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
-      <beans:constructor-arg name="sqlSessionFactory" 
-         ref="sessionFactory"/>
-   </beans:bean>
-   
-
-    <Resource name="jdbc/myoracle" auth="Container"
-    		  type="javax.sql.DataSource" driverClassName="oracle.jdbc.OracleDriver"
-    		  url="jdbc:oracle:thin:@172.20.1.133:1521:xe"
-    		  username="joodoil" password="a9894" maxTotal="20" maxIdle="10"
-    		  maxWaitMillis="-1"/>
+    <!--아래 없으면 [jdbc]을(를) 찾을 수 없습니다. org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'dataSource' defined  에러 뜸-->
+<!-- <Resource name="jdbc/myoracle" auth="Container"
+        	type="javax.sql.DataSource" driverClassName="oracle.jdbc.OracleDriver"
+        	url="jdbc:oracle:thin:@127.0.0.1:1521:xe"
+        	username="joodoil" password="a9894" maxTotal="20" maxIdle="10"
+        	maxWaitMillis="-1"/>     -->
 </Context>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper/dtd">
+<mapper namespace="board">
+	<insert id="boardInsert" parameterType="com.great.gatsby.vo.BoardVO">
+		INSERT into jooboard
+		( BOARD_NUM
+		 ,BOARD_TITLE
+		 ,BOARD_CONTENT
+		 ,BOARD_WRITER
+		 )
+		values(
+			BOARD_SEQ.nextval,
+			#{BOARD_TITLE},
+			#{BOARD_CONTENT},
+			#{BOARD_WRITER}
+		)
+	</insert>
+	<select id="boardlist" resultType="com.great.gatsby.vo.BoardVO">
+		SELECT
+			 BOARD_NUM
+			,BOARD_TITLE
+			,BOARD_CONTENT
+			,BOARD_WRITER
+			,REG_DATE
+		FROM jooboard
+		order by BOARD_NUM asc	<!-- 글번호를 기준으로 오름차순 정렬  -->
+	</select>
+	
+	<select id="boardView" parameterType="int" resultType="com.great.gatsby.vo.BoardVO">
+		SELECT
+			 BOARD_NUM
+			,BOARD_TITLE
+			,BOARD_CONTENT
+			,BOARD_WRITER
+			,REG_DATE
+		FROM jooboard
+		WHERE BOARD_NUM = #{BOARD_NUM}		
+	</select>
+	
+	<update id="boardUpdate" parameterType="com.great.gatsby.vo.BoardVO">
+        UPDATE  jooboard 
+           SET  BOARD_TITLE   = #{BOARD_TITLE},
+            	BOARD_CONTENT = #{BOARD_CONTENT}
+        WHERE   BOARD_NUM 	  = #{BOARD_NUM}	
+	</update>
+	
+	<delete id="boardDelete" parameterType="int">
+		DELETE
+		FROM  jooboard
+		WHERE BOARD_NUM = #{BOARD_NUM}
+	</delete>
+	
+</mapper>
